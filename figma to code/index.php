@@ -704,5 +704,135 @@
     </button>
 
     <script src="js/main.js"></script>
+
+    <!-- DATE AVAILABILITY CHECKER -->
+    <script>
+      console.log('✅ Script încărcat - Inițializare checker de disponibilitate');
+      
+      // Initialize checker when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeDateChecker);
+      } else {
+        // DOM is already loaded
+        initializeDateChecker();
+      }
+
+      function initializeDateChecker() {
+        console.log('🔧 Inițializare checker...');
+        let debounceTimer;
+        const inputElements = document.querySelectorAll('.ai-prompt-input');
+        
+        console.log('🔍 Inputuri găsite:', inputElements.length);
+        
+        if (inputElements.length === 0) {
+          console.warn('⚠️ Nu au fost găsite inputuri .ai-prompt-input');
+          return;
+        }
+        
+        inputElements.forEach((input, index) => {
+          console.log('📌 Input', index, '- Event listeners adăugate');
+          
+          // Listen for input changes
+          input.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            
+            const dateInput = this.value.trim();
+            
+            if (dateInput.length < 3) {
+              hideAvailabilityResponse();
+              return;
+            }
+            
+            // Debounce to avoid too many requests
+            debounceTimer = setTimeout(() => {
+              checkDateAvailability(dateInput, this);
+            }, 500);
+          });
+
+          // Check on Enter key
+          input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              clearTimeout(debounceTimer);
+              checkDateAvailability(this.value.trim(), this);
+            }
+          });
+        });
+        
+        console.log('✅ Checker inițializat cu succes!');
+      }
+
+      function checkDateAvailability(dateInput, inputElement) {
+        console.log('📡 Verificare dată:', dateInput);
+        
+        const container = inputElement.closest('.navbar-prompt') || inputElement.closest('.navbar-prompt-mobile-320');
+        const availabilityContainer = container ? container.querySelector('.availability-container') : null;
+        
+        if (!availabilityContainer) {
+          console.error('❌ Containerul de disponibilitate nu a fost găsit');
+          return;
+        }
+        
+        const apiUrl = 'api_check_date.php?data=' + encodeURIComponent(dateInput);
+        console.log('🌐 URL API:', apiUrl);
+        
+        fetch(apiUrl)
+          .then(response => {
+            console.log('📥 Status HTTP:', response.status);
+            if (!response.ok) {
+              throw new Error('HTTP ' + response.status);
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('✅ Răspuns API:', data);
+            
+            // Selectează elementele prin cu querySelectorAll pentru a evita :not() issues
+            const disponibilitatea = availabilityContainer.querySelectorAll('.disponibilitate');
+            const availableMsg = disponibilitatea[0];   // Prima = mesaj disponibil
+            const unavailableMsg = disponibilitatea[1]; // A doua = mesaj indisponibil
+            const reserveBtn = availabilityContainer.querySelector('.btn-reserve-now');
+            
+            console.log('🔍 Available msg:', availableMsg, 'Unavailable msg:', unavailableMsg, 'Reserve btn:', reserveBtn);
+            
+            if (data.available) {
+              // Data is AVAILABLE
+              if (availableMsg) {
+                availableMsg.classList.remove('hidden');
+                console.log('✅ Arătând mesaj DISPONIBIL');
+              }
+              if (unavailableMsg) unavailableMsg.classList.add('hidden');
+              if (reserveBtn) reserveBtn.classList.remove('hidden');
+              console.log('✅ Data DISPONIBILĂ!');
+            } else {
+              // Data is NOT AVAILABLE
+              if (availableMsg) availableMsg.classList.add('hidden');
+              if (unavailableMsg) {
+                unavailableMsg.classList.remove('hidden');
+                console.log('✅ Arătând mesaj INDISPONIBIL');
+              }
+              if (reserveBtn) reserveBtn.classList.add('hidden');
+              console.log('❌ Data NU este disponibilă');
+            }
+          })
+          .catch(error => {
+            console.error('❌ Eroare:', error);
+            hideAvailabilityResponse();
+          });
+      }
+
+      function hideAvailabilityResponse() {
+        const containers = document.querySelectorAll('.availability-container');
+        containers.forEach(container => {
+          const disponibilitatea = container.querySelectorAll('.disponibilitate');
+          const availableMsg = disponibilitatea[0];
+          const unavailableMsg = disponibilitatea[1];
+          const reserveBtn = container.querySelector('.btn-reserve-now');
+          
+          if (availableMsg) availableMsg.classList.add('hidden');
+          if (unavailableMsg) unavailableMsg.classList.add('hidden');
+          if (reserveBtn) reserveBtn.classList.add('hidden');
+        });
+      }
+    </script>
   </body>
 </html>

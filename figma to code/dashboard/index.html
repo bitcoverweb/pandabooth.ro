@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Panda Booth</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">🐼</div>
+                    <span>Panda Booth</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-group">
+                    <p class="nav-label">Main</p>
+                    <a href="#" class="nav-item active">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Team</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Goals</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-tasks"></i>
+                        <span>Tasks</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+
+                <div class="nav-group">
+                    <p class="nav-label">Other</p>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Documents</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">M</div>
+                    <div class="user-info">
+                        <p class="user-name">Michael Jones</p>
+                        <p class="user-email">michael@panda.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- HEADER -->
+            <header class="dashboard-header">
+                <h1>AI Team Management</h1>
+                <div class="header-actions">
+                    <button class="btn-icon">
+                        <i class="fas fa-sliders-h"></i>
+                    </button>
+                    <button class="btn-icon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="btn-primary">Upgrade plan</button>
+                </div>
+            </header>
+
+            <!-- CONTENT -->
+            <div class="content">
+                <!-- STATS ROW -->
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Efficiency</div>
+                        <div class="stat-value">87%</div>
+                        <div class="stat-visual">
+                            <div class="avatar-stack">
+                                <img src="https://i.pravatar.cc/40?img=1" alt="User" class="avatar">
+                                <img src="https://i.pravatar.cc/40?img=2" alt="User" class="avatar">
+                                <div class="avatar-add">+</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Tasks din săptământa</div>
+                        <div class="stat-value">15</div>
+                        <div class="stat-change">35% left</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Online time per day</div>
+                        <div class="stat-value">9.2<span class="unit">h</span></div>
+                        <div class="stat-increase">
+                            <i class="fas fa-arrow-up"></i> 3%
+                            <span class="text-small">compared to last week</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHARTS ROW -->
+                <div class="charts-row">
+                    <!-- PERFORMANCE REVIEW -->
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Performance review</h3>
+                            <button class="btn-menu">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                        <div id="performanceChart" class="chart-container"></div>
+                    </div>
+
+                    <!-- TEAM PERFORMANCE -->
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Team performance</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot dev-team"></span> Dev team</span>
+                                <span class="legend-item"><span class="legend-dot design-team"></span> Design team</span>
+                            </div>
+                        </div>
+                        <div id="teamChart" class="chart-container"></div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM ROW -->
+                <div class="bottom-row">
+                    <!-- NEED REVIEW -->
+                    <div class="review-card">
+                        <div class="card-header">
+                            <h3>Need review</h3>
+                            <a href="#" class="link-see-all">See all</a>
+                        </div>
+                        <div class="review-list">
+                            <div class="review-item">
+                                <img src="https://i.pravatar.cc/40?img=3" alt="User" class="review-avatar">
+                                <div class="review-info">
+                                    <p class="review-name">Wade Warren</p>
+                                    <p class="review-role">Marketing coordinator</p>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div class="review-item">
+                                <img src="https://i.pravatar.cc/40?img=4" alt="User" class="review-avatar">
+                                <div class="review-info">
+                                    <p class="review-name">Jakob Jones</p>
+                                    <p class="review-role">Web designer</p>
+                                </div>
+                                <i class="fas fa-edit edit-icon"></i>
+                            </div>
+                            <div class="review-item">
+                                <img src="https://i.pravatar.cc/40?img=5" alt="User" class="review-avatar">
+                                <div class="review-info">
+                                    <p class="review-name">Leslie Wonderland</p>
+                                    <p class="review-role">PM manager</p>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <a href="#" class="btn-manage">Manage personal</a>
+                    </div>
+
+                    <!-- DEPARTMENTS -->
+                    <div class="departments-card">
+                        <div class="card-header">
+                            <h3>Departments</h3>
+                            <button class="btn-menu">
+                                <i class="fas fa-sliders-h"></i>
+                            </button>
+                            <button class="btn-add">+ Add team</button>
+                        </div>
+                        <div class="departments-grid">
+                            <div class="dept-card ui">
+                                <i class="fas fa-palette"></i>
+                                <p class="dept-name">UI designers</p>
+                                <p class="dept-count">23</p>
+                            </div>
+                            <div class="dept-card accounting">
+                                <i class="fas fa-receipt"></i>
+                                <p class="dept-name">Accounting<br/>Sales</p>
+                                <p class="dept-count">10</p>
+                            </div>
+                            <div class="dept-card social">
+                                <i class="fas fa-share-alt"></i>
+                                <p class="dept-name">Social media</p>
+                                <p class="dept-count">15</p>
+                            </div>
+                            <div class="dept-card seo">
+                                <i class="fas fa-search"></i>
+                                <p class="dept-name">SEO</p>
+                                <p class="dept-count">17</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Chart Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -49,10 +49,10 @@
               <i class="fa-solid fa-square-phone"></i> <a href="tel:+40726144144" style="color: inherit; text-decoration: none; cursor: pointer;">0726.144.144</a></span
             >
           </div>
-          <p class="disponibilitate">
+          <p class="disponibilitate hidden">
             <i class="fa-solid fa-check"></i> Data este disponibilă!
           </p>
-          <button class="btn-reserve-now">
+          <button class="btn-reserve-now hidden">
             <span>Rezervă acum</span>
             <i class="fa-solid fa-calendar-check"></i>
           </button>
@@ -92,11 +92,12 @@
           <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
+
       <div class="availability-container">
-        <p class="disponibilitate">
+        <p class="disponibilitate hidden">
           <i class="fa-solid fa-check"></i> Data este disponibilă!
         </p>
-        <button class="btn-reserve-now">
+        <button class="btn-reserve-now hidden">
           <span>Rezervă acum</span>
           <i class="fa-solid fa-calendar-check"></i>
         </button>
