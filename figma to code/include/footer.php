@@ -16,7 +16,7 @@
         <li><a href="#home">Acasă</a></li>
         <li><a href="#about">Despre noi</a></li>
         <li><a href="#availability">Verifică disponibilitatea</a></li>
-        <li><a href="#faqs">Întrebări frecvente</a></li>
+        <li><a href="index.php#faqs">Întrebări frecvente</a></li>
         <li><a href="#contact">Amintiri din evenimente</a></li>
         <li><a href="#reservations">Rezervă experiența</a></li>
         <li><a href="#contact-us">Contact</a></li>

@@ -410,7 +410,7 @@
     </section>
 
     <!-- FAQ SECTION -->
-    <section class="faq-section">
+    <section class="faq-section" id="faqs">
       <div class="faq-container">
         <div class="faq-left">
           <h2 class="faq-title">Întrebări adresate frecvent</h2>
