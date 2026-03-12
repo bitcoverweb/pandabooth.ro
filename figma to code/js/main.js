@@ -490,12 +490,27 @@ function checkMatch() {
   gameActive = true;
 }
 
+function generateDiscountCode() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 10; i++) {
+    code += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return code;
+}
+
 function endGame(won) {
   gameActive = false;
   clearInterval(timerInterval);
   gameBoard.style.display = "none";
   
   if (won) {
+    // Generate random 10-character discount code
+    const discountCode = generateDiscountCode();
+    const couponCodeElement = document.getElementById('generatedCouponCode');
+    if (couponCodeElement) {
+      couponCodeElement.textContent = discountCode;
+    }
     gameWinScreen.style.display = "block";
   } else {
     gameFailScreen.style.display = "block";
@@ -513,9 +528,19 @@ function resetToStart() {
 
 function sendEmailPHP() {
   const email = gameUserEmail.value.trim();
+  const couponCodeElement = document.getElementById('generatedCouponCode');
+  const cod_reduceri = couponCodeElement ? couponCodeElement.textContent : '';
   
-  if (!email.includes("@")) {
+  // Validare email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
     gameFormMsg.textContent = "❌ Email invalid!";
+    gameFormMsg.style.color = "#d35400";
+    return;
+  }
+  
+  if (!cod_reduceri) {
+    gameFormMsg.textContent = "❌ Codul de reducere nu a putut fi găsit.";
     gameFormMsg.style.color = "#d35400";
     return;
   }
@@ -527,28 +552,49 @@ function sendEmailPHP() {
   // Create form data
   const formData = new FormData();
   formData.append("email", email);
-  formData.append("coupon", "PANDA10");
+  formData.append("cod_reduceri", cod_reduceri);
   
   // Send to server
-  fetch("send_coupon.php", {
+  console.log('📧 Trimitere email cu cod:', cod_reduceri, 'la:', email);
+  
+  fetch("save_discount_code.php", {
     method: "POST",
     body: formData
   })
-  .then(response => response.text())
+  .then(response => {
+    // Always try to parse JSON, regardless of status code
+    return response.text().then(text => {
+      console.log('Raw response:', text.substring(0, 200));
+      
+      if (!text) {
+        throw new Error('Empty response from server');
+      }
+      
+      try {
+        const data = JSON.parse(text);
+        console.log('✅ Parsed server response:', data);
+        return data;
+      } catch (e) {
+        console.error('Failed to parse JSON response:', text);
+        throw new Error('Invalid JSON response: ' + text.substring(0, 100));
+      }
+    });
+  })
   .then(data => {
-    if (data.trim() === "success") {
-      gameFormMsg.textContent = "✅ Trimis! Verifică email-ul.";
+    if (data.success) {
+      gameFormMsg.textContent = "✅ " + data.message;
       gameFormMsg.style.color = "#4CAF50";
       gameUserEmail.disabled = true;
+      gameSendEmailBtn.disabled = true;
     } else {
-      gameFormMsg.textContent = "❌ A apărut o problemă. Încearcă din nou.";
+      gameFormMsg.textContent = "❌ " + (data.message || 'Eroare necunoscută');
       gameFormMsg.style.color = "#d35400";
+      gameSendEmailBtn.disabled = false;
     }
-    gameSendEmailBtn.disabled = false;
   })
   .catch(error => {
-    console.error("Error:", error);
-    gameFormMsg.textContent = "❌ Eroare de conexiune.";
+    console.error("❌ Network/Parse Error:", error.message);
+    gameFormMsg.textContent = "❌ Eroare: " + error.message;
     gameFormMsg.style.color = "#d35400";
     gameSendEmailBtn.disabled = false;
   });

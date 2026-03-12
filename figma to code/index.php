@@ -632,8 +632,17 @@
           <h3 class="availability-title">Verifică disponibilitatea instant</h3>
           <p class="availability-subtitle">Alege data evenimentului și primești instant răspunsul.</p>
           <div class="availability-form">
-            <input type="date" class="availability-input" />
-            <button class="availability-btn">Verifică</button>
+            <input type="date" class="availability-input" id="reviewsAvailabilityInput" 
+                   name="event-date" required />
+            <button class="availability-btn" id="reviewsAvailabilityBtn">Verifică</button>
+          </div>
+          <div id="reviewsAvailabilityResponse" class="availability-response" style="display: none; margin-top: 16px;">
+            <p id="reviewsAvailableMsg" class="availability-available" style="display: none; margin: 0; padding: 12px 16px; background-color: #d4edda; color: #155724;">
+              ✅ <strong>Data este disponibilă!</strong> Contactează-ne pentru a finaliza rezervarea.
+            </p>
+            <p id="reviewsUnavailableMsg" class="availability-unavailable" style="display: none; margin: 0; padding: 12px 16px; background-color: #f8d7da; color: #721c24;">
+              ❌ <strong>Data nu este disponibilă.</strong> Te rugăm alege o altă dată.
+            </p>
           </div>
           <p class="availability-disclaimer">Prin selectarea datei ești de acord cu Termenii și Condițiile noastre</p>
         </div>
@@ -676,8 +685,8 @@
           <div id="gameWinScreen" class="game-screen" style="display: none;">
             <p class="win-message">🎉 Felicitări! Ai fost super rapid!</p>
             <p class="reward-subtitle">Codul tău de reducere 10% este:</p>
-            <div class="coupon-box">PANDA10</div>
-            <p class="email-subtitle">Vrei să primești codul și pe email?</p>
+            <div class="coupon-box" id="generatedCouponCode">PANDA10</div>
+            <p class="email-subtitle">Codul devine activ in momentul in care se trimite catre adresa de email.</p>
             <div class="email-input-group">
               <input type="email" id="gameUserEmail" class="game-email-input" placeholder="Adresa ta de email" />
               <button class="game-send-email-btn" id="gameSendEmailBtn">Trimite-mi email 📩</button>
@@ -704,6 +713,10 @@
     </button>
 
     <script src="js/main.js"></script>
+
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ro.js"></script>
 
     <!-- DATE AVAILABILITY CHECKER -->
     <script>
@@ -738,7 +751,11 @@
             
             const dateInput = this.value.trim();
             
-            if (dateInput.length < 3) {
+            // Verifică dacă data conține un an (4 cifre consecutive)
+            const yearRegex = /\d{4}/;
+            const hasYear = yearRegex.test(dateInput);
+            
+            if (dateInput.length < 3 || !hasYear) {
               hideAvailabilityResponse();
               return;
             }
@@ -832,6 +849,103 @@
           if (unavailableMsg) unavailableMsg.classList.add('hidden');
           if (reserveBtn) reserveBtn.classList.add('hidden');
         });
+      }
+    </script>
+
+    <!-- REVIEWS SECTION AVAILABILITY CHECKER -->
+    <script>
+      console.log('🔧 Inițializare Reviews Availability Checker...');
+      
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeReviewsAvailabilityChecker);
+      } else {
+        initializeReviewsAvailabilityChecker();
+      }
+
+      function initializeReviewsAvailabilityChecker() {
+        const dateInput = document.getElementById('reviewsAvailabilityInput');
+        const checkBtn = document.getElementById('reviewsAvailabilityBtn');
+        
+        // Initialize Flatpickr
+        flatpickr(dateInput, {
+          locale: 'ro',
+          dateFormat: 'Y-m-d',
+          minDate: 'today',
+          theme: 'light',
+          animate: true,
+          showMonths: 1
+        });
+        
+        if (!dateInput || !checkBtn) {
+          console.warn('⚠️ Reviews availability checker nu a găsit elementele necesare');
+          return;
+        }
+        
+        // Event listener for date selection
+        dateInput.addEventListener('change', function() {
+          if (this.value) {
+            checkReviewsDateAvailability(this.value);
+          }
+        });
+        
+        // Event listener for button click
+        checkBtn.addEventListener('click', function() {
+          if (dateInput.value) {
+            checkReviewsDateAvailability(dateInput.value);
+          }
+        });
+        
+        console.log('✅ Reviews Checker inițializat cu succes!');
+      }
+
+      function checkReviewsDateAvailability(selectedDate) {
+        console.log('📡 Verificare dată Reviews:', selectedDate);
+        
+        const responseDiv = document.getElementById('reviewsAvailabilityResponse');
+        const availableMsg = document.getElementById('reviewsAvailableMsg');
+        const unavailableMsg = document.getElementById('reviewsUnavailableMsg');
+        
+        if (!responseDiv || !availableMsg || !unavailableMsg) {
+          console.error('❌ Nu au fost găsite elementele de răspuns');
+          return;
+        }
+        
+        // Convert date format from yyyy-mm-dd to dd.mm.yyyy for API
+        const [year, month, day] = selectedDate.split('-');
+        const formattedDate = `${day}.${month}.${year}`;
+        
+        const apiUrl = 'api_check_date.php?data=' + encodeURIComponent(formattedDate);
+        console.log('🌐 URL API:', apiUrl);
+        
+        fetch(apiUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('HTTP ' + response.status);
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('✅ Răspuns API:', data);
+            
+            if (data.available) {
+              availableMsg.style.display = 'block';
+              unavailableMsg.style.display = 'none';
+              responseDiv.style.display = 'block';
+              console.log('✅ Data DISPONIBILĂ!');
+            } else {
+              availableMsg.style.display = 'none';
+              unavailableMsg.style.display = 'block';
+              responseDiv.style.display = 'block';
+              console.log('❌ Data NU este disponibilă');
+            }
+          })
+          .catch(error => {
+            console.error('❌ Eroare:', error);
+            availableMsg.style.display = 'none';
+            unavailableMsg.innerHTML = '❌ <strong>Eroare la verificare.</strong> Te rugăm încearcă din nou.';
+            unavailableMsg.style.display = 'block';
+            responseDiv.style.display = 'block';
+          });
       }
     </script>
   </body>
